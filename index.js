@@ -76,6 +76,8 @@ function chooseOption() {
             if(err)throw err;
             });
 };
+
+//view all departments
 function viewDeps(){
     let query = `SELECT departments.id, departments.name
     FROM departments`;
@@ -86,3 +88,17 @@ function viewDeps(){
         chooseOption();
       });
   }
+//view all roles
+  function viewRoles() {
+    let query = `SELECT roles.id, departments.name, roles.title, roles.salary 
+    FROM departments
+    JOIN roles on departments.id = roles.id`;
+    
+    db.query(query, (err, res)=>{
+        if (err) throw err;
+        console.table(res);
+        chooseOption();
+      });
+  }
+  
+  //view all employees
