@@ -1,7 +1,6 @@
 const express = require('express');
 const mysql = require('mysql2');
 const inquirer = require('inquirer');
-const fs = require('fs');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -19,9 +18,16 @@ const db = mysql.createConnection(
     console.log(`Connected to the company_db database.`)
   );
 
+
+  db.connect(function(err){
+    if (err) throw err;
+    chooseOption ()
+  }
+  )
 // Options
-const chooseOption = () => {
-    return inquirer.prompt([
+
+function chooseOption() {
+   inquirer.prompt([
         {
             type: "list",
             message: "Select one of the following options ",
@@ -33,14 +39,16 @@ const chooseOption = () => {
                 'add a department',
                 'add a role',
                 'add an employee',
-                'update an employee role'
+                'update an employee role',
+                'completed'
             ]
         }
     ])
-        .then(pickedOption => {
-            switch (pickedOption.select) {
+        .then((res)=>{
+            console.log(res.pickOption);
+            switch (res.pickOption) {
                 case "view all departments":
-                    viewDepartment();
+                    viewDeps();
                     break;
                 case "view all roles":
                     viewRoles();
@@ -60,18 +68,15 @@ const chooseOption = () => {
                 case "update an employee role":
                     updateEmployeeRole();
                     break;
-                default:
-                    console.log('Have a great day!');
+                case 'completed':
+                    db.end();
                     break;
             }
-        });
+        }).catch((err)=>{
+            if(err)throw err;
+            });
 };
-
-
-function viewDepartment() {
-    // query database by selecting all * from departments
-    // use array.forEach to go over your query results, and console.log each one
-
+function viewDeps(){
+    let query = `SELECT
+    departments.name`
 }
-db.query('SELECT roles.role_id, departments.department, roles.job_title, roles.salary FROM departments JOIN roles on departments.department = roles.department');
-
