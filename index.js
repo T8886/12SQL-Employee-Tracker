@@ -92,7 +92,7 @@ function viewDeps(){
   function viewRoles() {
     let query = `SELECT roles.id, departments.name, roles.title, roles.salary 
     FROM departments
-    JOIN roles on departments.id = roles.id`;
+    JOIN roles ON departments.id = roles.department_id`;
     
     db.query(query, (err, res)=>{
         if (err) throw err;
@@ -100,5 +100,18 @@ function viewDeps(){
         chooseOption();
       });
   }
-  
+
   //view all employees
+  function viewEmployees() {
+    let query = `SELECT employees.id, employees.first_name, employees.last_name, roles.title, departments.name, roles.salary, CONCAT (manager.first_name, ' ', manager.last_name) AS manager
+    FROM employees
+    LEFT JOIN roles ON employees.roles_id =roles.id
+    LEFT JOIN departments ON departments.id = roles.departments_id
+    LEFT JOIN employees manager ON manager.id = employees.manager_id`;
+    
+    db.query(query, (err, res)=>{
+        if (err) throw err;
+        console.table(res);
+        chooseOption();
+      });
+  }
