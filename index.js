@@ -31,7 +31,7 @@ function chooseOption() {
         {
             type: "list",
             message: "Select one of the following options ",
-            name: "select",
+            name: "pickOption",
             choices: [
                 'view all departments',
                 'view all roles',
@@ -77,7 +77,7 @@ function chooseOption() {
             });
 };
 function viewDeps(){
-    let query = `SELECT department.id, department.name
+    let query = `SELECT departments.id, departments.name
     FROM departments`;
 
     db.query(query, (err, res)=>{
