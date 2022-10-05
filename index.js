@@ -1,12 +1,12 @@
-const express = require('express');
+// const express = require('express');
 const mysql = require('mysql2');
 const inquirer = require('inquirer');
 
-const app = express();
-const PORT = process.env.PORT || 3001;
+// const app = express();
+// const PORT = process.env.PORT || 3001;
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+// app.use(express.json());
+// app.use(express.urlencoded({ extended: true }));
 
 const db = mysql.createConnection(
     {
@@ -77,6 +77,12 @@ function chooseOption() {
             });
 };
 function viewDeps(){
-    let query = `SELECT
-    departments.name`
-}
+    let query = `SELECT department.id, department.name
+    FROM departments`;
+
+    db.query(query, (err, res)=>{
+        if (err) throw err;
+        console.table(res);
+        chooseOption();
+      });
+  }
