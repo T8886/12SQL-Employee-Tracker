@@ -117,14 +117,14 @@ function viewDeps(){
       });
   }
 
-  // add Department
+  // add department
   function addDepartment() {
     inquirer
     .prompt([
         {
             type: "input",
             message: "Enter Department name: ",
-            name: "name",
+            name: "name"
         }
     ]).then((res)=>{
         let query = `INSERT INTO departments SET?`;
@@ -135,3 +135,166 @@ function viewDeps(){
         });
     });
   }
+
+  // add role
+function addRole(){
+    var query = `SELECT departments.id, departments.name, roles.salary
+    FROM employees
+    JOIN roles ON employees.role_id = roles.id
+    JOIN departments ON departments.id = roles.department_id
+    GROUP BY departments.id, departments.name;`
+  
+    connection.query(query,(err, res)=>{
+      if(err)throw err;
+      const departments = res.map(({ id, name }) => ({
+        value: id, name:
+        `${id} ${name}`
+      }));
+      roleInfo(departments);
+    });
+}
+
+function roleInfo(departments){
+    inquirer
+      .prompt([
+        {
+          type: "input",
+          message: "Enter name of the role: ",
+          name: "role"
+        },
+        {
+          type: "input",
+          message: "Enter role's salary: ",
+          name: "salary"
+        },
+        {
+          type: "list",
+          message: "Enter role's department: ",
+          name: "department",
+          choices: roleInfo
+        },
+      ]).then((res)=>{
+        let query = `INSERT INTO roles SET ?`;
+  
+        connection.query(query, {
+            title: res.title,
+            salary: res.salary,
+            department_id: res.department
+        },(err, res)=>{
+            if(err) throw err;
+            
+            chooseOption();
+        });
+    });
+}
+
+
+// add an employee
+function addEmployee(){
+    let query = `SELECT roles.id, roles.title, roles.salary 
+    FROM roles;`
+ connection.query(query,(err, res)=>{
+    if(err)throw err;
+    const roles = res.map(({ id, title, salary }) => ({
+      value: id, 
+      title: `${title}`, 
+      salary: `${salary}`
+    }));
+    console.table(res);
+    employeeRoles(roles);
+  });
+}
+  
+function employeeRoles(roles) {
+  inquirer
+    .prompt([
+    {
+      type: "input",
+      message: "Enter employee's first name: ",
+      name: "firstName"
+    },
+    {
+      type: "input",
+      message: "Enter employee's last name: ",
+      name: "lastName"
+    },
+    {
+      type: "list",
+      message: "Enter employee's role: ",
+      name: "role",
+      choices: roles
+    }
+  ]).then((res)=>{
+      let query = `INSERT INTO employees SET ?`
+      connection.query(query,{
+        first_name: res.firstName,
+        last_name: res.lastName,
+        role_id: res.role
+      },(err, res)=>{
+        if(err) throw err;
+        chooseOption();
+    });
+  });
+}
+
+// update employee role
+function updateEmployeeRole(){
+    let query = `SELECT employees.id, employees.first_name, employees.last_name, roles.title, departments.name, roles.salary, 
+                    CONCAT(manager.first_name, ' ', manager.last_name) AS manager
+                FROM employees
+                JOIN role ON employees.role_id = roles.id
+                JOIN departments ON departments.id = roles.department_id
+                JOIN employee manager ON manager.id = employees.manager_id`
+  
+    connection.query(query,(err, res)=>{
+      if(err)throw err;
+      const employees = res.map(({ id, first_name, last_name }) => ({
+        value: id,
+         name: `${first_name} ${last_name}`      
+      }));
+    //   console.table(res);
+      updatedR(employees);
+    });
+}
+
+function updatedR(employees){
+  let query = 
+  `SELECT roles.id, roles.title, roles.salary 
+   FROM roles`
+
+  connection.query(query,(err, res)=>{
+    if(err)throw err;
+    let roleOptions = res.map(({ id, title, salary }) => ({
+      value: id, 
+      title: `${title}`, 
+      salary: `${salary}`      
+    }));
+    console.table(res);
+    getUpdatedRole(employees, roleOptions);
+  });
+}
+  
+function getUpdatedRole(employees, roleOptions) {
+  inquirer
+    .prompt([
+      {
+        type: "list",
+        message: `Enter employee who's role will be updated: `,
+        name: "employee",
+        choices: employees
+      },
+      {
+        type: "list",
+        message: "Select new role: ",
+        name: "role",
+        choices: roleOptions
+      },
+
+    ]).then((res)=>{
+      let query = `UPDATE employee SET role_id = ? WHERE id = ?`
+      connections.query(query,[ res.roles, res.employees],(err, res)=>{
+          if(err)throw err;
+          chooseOption();
+        });
+    });
+}
