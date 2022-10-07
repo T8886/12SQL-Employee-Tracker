@@ -187,22 +187,16 @@ function viewDeps(){
 
 
 // add an employee
-function addEmployee(){
-    let query = `SELECT roles.id, roles.title, roles.salary 
-    FROM roles;`
- connection.query(query,(err, res)=>{
-    if(err)throw err;
-    const roles = res.map(({ id, title, salary }) => ({
-      value: id, 
-      title: `${title}`, 
-      salary: `${salary}`
-    }));
-    console.table(res);
-    employeeRoles(roles);
-  });
-}
-  
-function employeeRoles(roles) {
+const addEmployee = () => {
+  connection.query('SELECT * FROM roles', (err, newRoles) => {
+    if (err) console.log(err);
+    newRoles = newRoles.map((roles) => {
+        return {
+            name: roles.title,
+            value: roles.id,
+        };
+    });  
+
   inquirer
     .prompt([
     {
@@ -219,20 +213,37 @@ function employeeRoles(roles) {
       type: "list",
       message: "Enter employee's role: ",
       name: "role",
-      choices: roles
-    }
-  ]).then((res)=>{
-      let query = `INSERT INTO employees SET ?`
-      connection.query(query,{
-        first_name: res.firstName,
-        last_name: res.lastName,
-        role_id: res.role
-      },(err, res)=>{
-        if(err) throw err;
-        chooseOption();
-    });
-  });
-}
+      choices: newRoles
+    },
+    {
+      type: "list",
+      message: "Enter manager's ID: ",
+      name: "manId",
+      choices: [1,3,]
+    },
+
+  ]).then((data)=>{
+    console.log(data.roles);
+    connection.query(
+        'INSERT INTO employees SET ?',
+        {
+            first_name: data.firstName,
+            last_name: data.lastName,
+            role_id: data.roles,
+            manager_id: data.manId
+        },
+        (err) => {
+            if (err) throw err;
+            console.log('Updated Employee Successfully added new EmployeeRoster;');
+            chooseOption();
+
+        }
+    );
+});
+
+});
+
+};
 
 // update employee role
 function updateEmployeeRole(){
