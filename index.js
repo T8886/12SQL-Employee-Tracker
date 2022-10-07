@@ -1,6 +1,9 @@
+//completed with the help of TA and multiple tutors.
+
 // const express = require('express');
 const mysql = require('mysql2');
 const inquirer = require('inquirer');
+const Connection = require('mysql2/typings/mysql/lib/Connection');
 
 // const app = express();
 // const PORT = process.env.PORT || 3001;
@@ -30,7 +33,7 @@ function chooseOption() {
    inquirer.prompt([
         {
             type: "list",
-            message: "Select one of the following options ",
+            message: "Select one of the following options: ",
             name: "pickOption",
             choices: [
                 'view all departments',
@@ -77,7 +80,7 @@ function chooseOption() {
             });
 };
 
-//view all departments
+// view all departments
 function viewDeps(){
     let query = `SELECT departments.id, departments.name
     FROM departments`;
@@ -88,7 +91,7 @@ function viewDeps(){
         chooseOption();
       });
   }
-//view all roles
+// view all roles
   function viewRoles() {
     let query = `SELECT roles.id, departments.name, roles.title, roles.salary 
     FROM departments
@@ -101,17 +104,35 @@ function viewDeps(){
       });
   }
 
-  //view all employees
+  // view all employees
   function viewEmployees() {
-    let query = `SELECT employees.id, employees.first_name, employees.last_name, roles.title, departments.name, roles.salary, CONCAT (manager.first_name, ' ', manager.last_name) AS manager
+    let query = `SELECT employees.id, employees.first_name, employees.last_name, roles.title, departments.name AS departments, roles.salary, CONCAT (manager.first_name, ' ', manager.last_name) AS manager
     FROM employees
-    LEFT JOIN roles ON employees.roles_id =roles.id
-    LEFT JOIN departments ON departments.id = roles.departments_id
-    LEFT JOIN employees manager ON manager.id = employees.manager_id`;
+    LEFT JOIN roles ON employees.role_id = roles.id
+    LEFT JOIN departments ON roles.department_id = departments.id
+    LEFT JOIN employees manager ON manager.id = employees.manager_id;`
     
     db.query(query, (err, res)=>{
         if (err) throw err;
         console.table(res);
         chooseOption();
       });
+  }
+
+  // add Department
+  function addDepartment() {
+    inquirer
+    .prompt([
+        {
+            type: "input",
+            message: "Enter Department name: ",
+            name: "name",
+        }
+    ]).then((res)=>{
+        let query = `INSERT INTO departments SET?`;
+        db.query(query, {name: res.name}, (err, res)=>{
+            if (err) throw err;
+            chooseOption();
+        });
+    });
   }
