@@ -1,9 +1,7 @@
-//completed with the help of TA and multiple tutors.
-
 // const express = require('express');
 const mysql = require('mysql2');
 const inquirer = require('inquirer');
-const Connection = require('mysql2/typings/mysql/lib/Connection');
+// const connection = require('mysql2/typings/mysql/lib/Connection');
 
 // const app = express();
 // const PORT = process.env.PORT || 3001;
@@ -11,7 +9,7 @@ const Connection = require('mysql2/typings/mysql/lib/Connection');
 // app.use(express.json());
 // app.use(express.urlencoded({ extended: true }));
 
-const db = mysql.createConnection(
+const connection = mysql.createConnection(
     {
       host: 'localhost',
       user: 'root',
@@ -22,7 +20,7 @@ const db = mysql.createConnection(
   );
 
 
-  db.connect(function(err){
+  connection.connect(function(err){
     if (err) throw err;
     chooseOption ()
   }
@@ -72,7 +70,7 @@ function chooseOption() {
                     updateEmployeeRole();
                     break;
                 case 'completed':
-                    db.end();
+                    connection.end();
                     break;
             }
         }).catch((err)=>{
@@ -85,7 +83,7 @@ function viewDeps(){
     let query = `SELECT departments.id, departments.name
     FROM departments`;
 
-    db.query(query, (err, res)=>{
+    connection.query(query, (err, res)=>{
         if (err) throw err;
         console.table(res);
         chooseOption();
@@ -97,7 +95,7 @@ function viewDeps(){
     FROM departments
     JOIN roles ON departments.id = roles.department_id`;
     
-    db.query(query, (err, res)=>{
+    connection.query(query, (err, res)=>{
         if (err) throw err;
         console.table(res);
         chooseOption();
@@ -112,7 +110,7 @@ function viewDeps(){
     LEFT JOIN departments ON roles.department_id = departments.id
     LEFT JOIN employees manager ON manager.id = employees.manager_id;`
     
-    db.query(query, (err, res)=>{
+    connection.query(query, (err, res)=>{
         if (err) throw err;
         console.table(res);
         chooseOption();
@@ -130,8 +128,9 @@ function viewDeps(){
         }
     ]).then((res)=>{
         let query = `INSERT INTO departments SET?`;
-        db.query(query, {name: res.name}, (err, res)=>{
+        connection.query(query, {name: res.name}, (err, res)=>{
             if (err) throw err;
+            console.table(res);
             chooseOption();
         });
     });
