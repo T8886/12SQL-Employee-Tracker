@@ -1,13 +1,7 @@
-// const express = require('express');
+// Created with assistants of multiple tutors and TA.
+
 const mysql = require('mysql2');
 const inquirer = require('inquirer');
-// const connection = require('mysql2/typings/mysql/lib/Connection');
-
-// const app = express();
-// const PORT = process.env.PORT || 3001;
-
-// app.use(express.json());
-// app.use(express.urlencoded({ extended: true }));
 
 const connection = mysql.createConnection(
     {
