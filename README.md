@@ -1,11 +1,11 @@
 # 12SQL-Employee-Tracker
 
 ## Table of Contents:
-* [Description]
-* [Visual Presentation]
-* [Installation]
-* [Usage]
-* [License]
+* [Description](https://github.com/T8886/12SQL-Employee-Tracker/blob/main/README.md#description)
+* [Visual Presentation](https://github.com/T8886/12SQL-Employee-Tracker/blob/main/README.md#visual-presentation)
+* [Installation](https://github.com/T8886/12SQL-Employee-Tracker/blob/main/README.md#installation)
+* [Usage](https://github.com/T8886/12SQL-Employee-Tracker/blob/main/README.md#usage)
+* [License](https://github.com/T8886/12SQL-Employee-Tracker/blob/main/README.md#license)
 
 ## Description
 12SQL-Employee-Tracker content management systems (CMS) was created for employees without any coding experience to easily view and interact with information stored in databases.
@@ -21,6 +21,7 @@ WHEN I choose to add an employee THEN I am prompted to enter the employee’s fi
 WHEN I choose to update an employee role THEN I am prompted to select an employee to update and their new role and this information is updated in the database.
 
 ## Visual Presentation
+https://drive.google.com/file/d/1mkhQMQhUdeX23lSAQ61xk7lK56D5U8pl/view?usp=sharing
 
 ## Installation
 * Node.js
